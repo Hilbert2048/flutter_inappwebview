@@ -366,7 +366,16 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             forKeyPath: #keyPath(WKWebView.title),
             options: [.new, .old],
             context: nil)
-        
+
+        addObserver(self,
+                    forKeyPath: #keyPath(WKWebView.canGoBack),
+                    options: [.new, .old],
+                    context: nil)
+        addObserver(self,
+                    forKeyPath: #keyPath(WKWebView.canGoForward),
+                    options: [.new, .old],
+                    context: nil)
+
         if #available(iOS 15.0, *) {
             addObserver(self,
                 forKeyPath: #keyPath(WKWebView.cameraCaptureState),
@@ -724,7 +733,16 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             let newTitle = change?[.newKey] as? String
             channelDelegate?.onTitleChanged(title: newTitle)
             inAppBrowserDelegate?.didChangeTitle(title: newTitle)
-        } else if keyPath == #keyPath(UIScrollView.contentOffset) {
+        } else if keyPath == #keyPath(WKWebView.canGoBack) && change?[.newKey] is Bool {
+            let canGoBack = change?[.newKey] as! Bool as Bool
+            channelDelegate?.onCanGoBackChanged(canGoBack: canGoBack)
+            inAppBrowserDelegate?.didChangedCanGoBack(canGoBack: canGoBack)
+        } else if keyPath == #keyPath(WKWebView.canGoForward) && change?[.newKey] is Bool {
+            let canGoForward = change?[.newKey] as! Bool as Bool
+            channelDelegate?.onCanGoForwardChanged(canGoForward: canGoForward)
+            inAppBrowserDelegate?.didChangeCanGoForward(canGoForward: canGoForward)
+        }
+        else if keyPath == #keyPath(UIScrollView.contentOffset) {
             let newContentOffset = change?[.newKey] as? CGPoint
             let oldContentOffset = change?[.oldKey] as? CGPoint
             let startedByUser = scrollView.isDragging || scrollView.isDecelerating

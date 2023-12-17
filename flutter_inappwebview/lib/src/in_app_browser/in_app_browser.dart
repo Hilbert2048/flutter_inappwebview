@@ -496,6 +496,12 @@ class InAppBrowser implements PlatformInAppBrowserEvents {
   void onTitleChanged(String? title) {}
 
   @override
+  void onCanGoBackChanged(bool canGoBack) {}
+
+  @override
+  void onCanGoForwardChanged(bool canGoForward) {}
+
+  @override
   void onUpdateVisitedHistory(WebUri? url, bool? isReload) {}
 
   @override

@@ -21,7 +21,9 @@ class _InAppWebViewExampleScreenState extends State<InAppWebViewExampleScreen> {
       mediaPlaybackRequiresUserGesture: false,
       allowsInlineMediaPlayback: true,
       iframeAllow: "camera; microphone",
-      iframeAllowFullscreen: true);
+      iframeAllowFullscreen: true,
+      allowsBackForwardNavigationGestures: true,
+  );
 
   PullToRefreshController? pullToRefreshController;
 
@@ -190,6 +192,12 @@ class _InAppWebViewExampleScreenState extends State<InAppWebViewExampleScreen> {
                   },
                   onConsoleMessage: (controller, consoleMessage) {
                     print(consoleMessage);
+                  },
+                  onCanGoBackChanged: (controller, canGoBack) {
+                    print('canGoBack: $canGoBack');
+                  },
+                  onCanGoForwardChanged: (controller, canGoForward) {
+                    print('canGoForward: $canGoForward');
                   },
                 ),
                 progress < 1.0

@@ -452,6 +452,26 @@ class IOSInAppWebViewController extends PlatformInAppWebViewController
             _inAppBrowserEventHandler!.onTitleChanged(title);
         }
         break;
+      case "onCanGoBackChanged":
+        if ((webviewParams != null && webviewParams!.onCanGoBackChanged != null) ||
+            _inAppBrowser != null) {
+          bool canGoBack = call.arguments["canGoBack"];
+          if (webviewParams != null && webviewParams!.onCanGoBackChanged != null)
+            webviewParams!.onCanGoBackChanged!(_controllerFromPlatform, canGoBack);
+          else
+            _inAppBrowserEventHandler!.onCanGoBackChanged(canGoBack);
+        }
+        break;
+      case "onCanGoForwardChanged":
+        if ((webviewParams != null && webviewParams!.onCanGoForwardChanged != null) ||
+            _inAppBrowser != null) {
+          bool canGoForward = call.arguments["canGoForward"];
+          if (webviewParams != null && webviewParams!.onCanGoForwardChanged != null)
+            webviewParams!.onCanGoForwardChanged!(_controllerFromPlatform, canGoForward);
+          else
+            _inAppBrowserEventHandler!.onCanGoForwardChanged(canGoForward);
+        }
+        break;
       case "onGeolocationPermissionsShowPrompt":
         if ((webviewParams != null &&
                 (webviewParams!.onGeolocationPermissionsShowPrompt != null ||

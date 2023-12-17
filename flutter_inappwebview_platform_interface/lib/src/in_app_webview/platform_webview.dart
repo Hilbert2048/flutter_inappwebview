@@ -596,6 +596,9 @@ class PlatformWebViewCreationParams<T> {
   ///{@endtemplate}
   final void Function(T controller, String? title)? onTitleChanged;
 
+  final void Function(T controller, bool canGoBack)? onCanGoBackChanged;
+  final void Function(T controller, bool canGoForward)? onCanGoForwardChanged;
+
   ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onOverScrolled}
   ///Event fired to respond to the results of an over-scroll operation.
   ///
@@ -1181,6 +1184,8 @@ class PlatformWebViewCreationParams<T> {
       this.onExitFullscreen,
       this.onPageCommitVisible,
       this.onTitleChanged,
+      this.onCanGoBackChanged,
+      this.onCanGoForwardChanged,
       this.onWindowFocus,
       this.onWindowBlur,
       this.onOverScrolled,

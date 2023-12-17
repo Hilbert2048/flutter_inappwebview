@@ -866,6 +866,20 @@ public class WebViewChannelDelegate : ChannelDelegate {
         channel?.invokeMethod("onTitleChanged", arguments: arguments)
     }
     
+    public func onCanGoBackChanged(canGoBack: Bool) {
+        let arguments: [String: Any?] = [
+            "canGoBack": canGoBack
+        ]
+        channel?.invokeMethod("onCanGoBackChanged", arguments: arguments)
+    }
+    
+    public func onCanGoForwardChanged(canGoForward: Bool) {
+        let arguments: [String: Any?] = [
+            "canGoForward": canGoForward
+        ]
+        channel?.invokeMethod("onCanGoForwardChanged", arguments: arguments)
+    }
+ 
     public class PermissionRequestCallback : BaseCallbackResult<PermissionResponse> {
         override init() {
             super.init()

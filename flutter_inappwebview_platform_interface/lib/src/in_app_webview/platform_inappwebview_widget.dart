@@ -65,6 +65,8 @@ class PlatformInAppWebViewWidgetCreationParams
       super.onExitFullscreen,
       super.onPageCommitVisible,
       super.onTitleChanged,
+      super.onCanGoBackChanged,
+      super.onCanGoForwardChanged,
       super.onWindowFocus,
       super.onWindowBlur,
       super.onOverScrolled,

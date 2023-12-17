@@ -951,6 +951,9 @@ abstract class PlatformInAppBrowserEvents {
   ///- MacOS
   void onTitleChanged(String? title) {}
 
+  void onCanGoBackChanged(bool canGoBack) {}
+  void onCanGoForwardChanged(bool canGoForward) {}
+
   ///Event fired to respond to the results of an over-scroll operation.
   ///
   ///[x] represents the new X scroll value in pixels.

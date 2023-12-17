@@ -9,6 +9,8 @@ import Foundation
 
 public protocol InAppBrowserDelegate {
     func didChangeTitle(title: String?)
+    func didChangedCanGoBack(canGoBack: Bool)
+    func didChangeCanGoForward(canGoForward: Bool)
     func didStartNavigation(url: URL?)
     func didUpdateVisitedHistory(url: URL?)
     func didFinishNavigation(url: URL?)

@@ -361,6 +361,14 @@ public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelega
         }
     }
     
+    public func didChangedCanGoBack(canGoBack: Bool) {
+        
+    }
+    
+    public func didChangeCanGoForward(canGoForward: Bool) {
+    
+    }
+    
     public func didStartNavigation(url: URL?) {
         forwardButton.isEnabled = webView?.canGoForward ?? false
         backButton.isEnabled = webView?.canGoBack ?? false
