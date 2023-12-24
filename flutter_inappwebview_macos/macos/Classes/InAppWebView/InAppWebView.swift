@@ -711,7 +711,7 @@ public class InAppWebView: WKWebView, WKUIDelegate,
             if contentBlockers.count > 0 {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: contentBlockers, options: [])
-                    let blockRules = String(data: jsonData, encoding: String.Encoding.utf8)
+                    let blockRules = String(data: jsonData, encoding: .utf8)
                     WKContentRuleListStore.default().compileContentRuleList(
                         forIdentifier: "ContentBlockingRules",
                         encodedContentRuleList: blockRules) { (contentRuleList, error) in
@@ -806,7 +806,7 @@ public class InAppWebView: WKWebView, WKUIDelegate,
         var jsToInject = source
         if let wrapper = jsWrapper {
             let jsonData: Data? = try? JSONSerialization.data(withJSONObject: [source], options: [])
-            let sourceArrayString = String(data: jsonData!, encoding: String.Encoding.utf8)
+            let sourceArrayString = String(data: jsonData!, encoding: .utf8)
             let sourceString: String? = (sourceArrayString! as NSString).substring(with: NSRange(location: 1, length: (sourceArrayString?.count ?? 0) - 2))
             jsToInject = String(format: wrapper, sourceString!)
         }
@@ -838,7 +838,7 @@ public class InAppWebView: WKWebView, WKUIDelegate,
         var jsToInject = source
         if let wrapper = jsWrapper {
             let jsonData: Data? = try? JSONSerialization.data(withJSONObject: [source], options: [])
-            let sourceArrayString = String(data: jsonData!, encoding: String.Encoding.utf8)
+            let sourceArrayString = String(data: jsonData!, encoding: .utf8)
             let sourceString: String? = (sourceArrayString! as NSString).substring(with: NSRange(location: 1, length: (sourceArrayString?.count ?? 0) - 2))
             jsToInject = String(format: wrapper, sourceString!)
         }
@@ -1365,7 +1365,7 @@ public class InAppWebView: WKWebView, WKUIDelegate,
                     switch action {
                         case 0:
                             InAppWebView.credentialsProposed = []
-                            // used .performDefaultHandling to mantain consistency with Android
+                            // used .performDefaultHandling to maintain consistency with Android
                             // because .cancelAuthenticationChallenge will call webView(_:didFail:withError:)
                             completionHandler(.performDefaultHandling, nil)
                             //completionHandler(.cancelAuthenticationChallenge, nil)
@@ -1462,10 +1462,13 @@ public class InAppWebView: WKWebView, WKUIDelegate,
                             completionHandler(.cancelAuthenticationChallenge, nil)
                             break
                         case 1:
-                            let exceptions = SecTrustCopyExceptions(serverTrust)
-                            SecTrustSetExceptions(serverTrust, exceptions)
-                            let credential = URLCredential(trust: serverTrust)
-                            completionHandler(.useCredential, credential)
+                            // workaround for https://github.com/pichillilorenzo/flutter_inappwebview/issues/1924
+                            DispatchQueue.global(qos: .background).async {
+                                let exceptions = SecTrustCopyExceptions(serverTrust)
+                                SecTrustSetExceptions(serverTrust, exceptions)
+                                let credential = URLCredential(trust: serverTrust)
+                                completionHandler(.useCredential, credential)
+                            }
                             break
                         default:
                             InAppWebView.credentialsProposed = []
@@ -1571,15 +1574,14 @@ public class InAppWebView: WKWebView, WKUIDelegate,
     }
     
     struct IdentityAndTrust {
-
-        var identityRef:SecIdentity
-        var trust:SecTrust
-        var certArray:AnyObject
+        var identityRef: SecIdentity
+        var trust: SecTrust
+        var certArray: AnyObject
     }
 
-    func extractIdentity(PKCS12Data:NSData, password: String) -> IdentityAndTrust? {
-        var identityAndTrust:IdentityAndTrust?
-        var securityError:OSStatus = errSecSuccess
+    func extractIdentity(PKCS12Data: NSData, password: String) -> IdentityAndTrust? {
+        var identityAndTrust: IdentityAndTrust?
+        var securityError: OSStatus = errSecSuccess
 
         var importResult: CFArray? = nil
         securityError = SecPKCS12Import(
@@ -1589,19 +1591,19 @@ public class InAppWebView: WKWebView, WKUIDelegate,
         )
 
         if securityError == errSecSuccess {
-            let certItems:CFArray = importResult! as CFArray;
-            let certItemsArray:Array = certItems as Array
-            let dict:AnyObject? = certItemsArray.first;
-            if let certEntry:Dictionary = dict as? Dictionary<String, AnyObject> {
+            let certItems: CFArray = importResult! as CFArray;
+            let certItemsArray: Array = certItems as Array
+            let dict: AnyObject? = certItemsArray.first;
+            if let certEntry: Dictionary = dict as? Dictionary<String, AnyObject> {
                 // grab the identity
-                let identityPointer:AnyObject? = certEntry["identity"];
-                let secIdentityRef:SecIdentity = (identityPointer as! SecIdentity?)!;
+                let identityPointer: AnyObject? = certEntry["identity"]
+                let secIdentityRef:SecIdentity = (identityPointer as! SecIdentity?)!
                 // grab the trust
-                let trustPointer:AnyObject? = certEntry["trust"];
-                let trustRef:SecTrust = trustPointer as! SecTrust;
+                let trustPointer: AnyObject? = certEntry["trust"]
+                let trustRef:SecTrust = trustPointer as! SecTrust
                 // grab the cert
-                let chainPointer:AnyObject? = certEntry["chain"];
-                identityAndTrust = IdentityAndTrust(identityRef: secIdentityRef, trust: trustRef, certArray:  chainPointer!);
+                let chainPointer: AnyObject? = certEntry["chain"]
+                identityAndTrust = IdentityAndTrust(identityRef: secIdentityRef, trust: trustRef, certArray:  chainPointer!)
             }
         } else {
             print("Security Error: " + securityError.description)

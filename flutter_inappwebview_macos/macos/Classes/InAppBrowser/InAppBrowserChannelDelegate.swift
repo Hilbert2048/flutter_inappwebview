@@ -8,7 +8,7 @@
 import Foundation
 import FlutterMacOS
 
-public class InAppBrowserChannelDelegate : ChannelDelegate {
+public class InAppBrowserChannelDelegate: ChannelDelegate {
     public override init(channel: FlutterMethodChannel) {
         super.init(channel: channel)
     }
@@ -23,6 +23,11 @@ public class InAppBrowserChannelDelegate : ChannelDelegate {
             "id": menuItem.id
         ]
         channel?.invokeMethod("onMenuItemClicked", arguments: arguments)
+    }
+    
+    public func onMainWindowWillClose() {
+        let arguments: [String: Any?] = [:]
+        channel?.invokeMethod("onMainWindowWillClose", arguments: arguments)
     }
     
     public func onExit() {

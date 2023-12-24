@@ -1,3 +1,18 @@
+## 1.0.10
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.9`
+- Fix typos and other code improvements (thanks to [michalsrutek](https://github.com/michalsrutek))
+- Fixed "runtime issue of SecTrustCopyExceptions 'This method should not be called on the main thread as it may lead to UI unresponsiveness.' when using onReceivedServerTrustAuthRequest" [#1924](https://github.com/pichillilorenzo/flutter_inappwebview/issues/1924)
+
+## 1.0.9
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.8`
+
+## 1.0.8
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.7`
+- Implemented `InAppBrowser.onMainWindowWillClose` event
+
 ## 1.0.7
 
 - Implemented `InAppWebViewSettings.interceptOnlyAsyncAjaxRequests`
@@ -29,7 +44,7 @@
 ## 1.0.1
 
 - Added `PlatformPrintJobController.onComplete` setter
-- Updated `flutter_inappwebview_platform_interface` version dependency to `1.0.2`
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.2`
 
 ## 1.0.0
 

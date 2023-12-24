@@ -1,3 +1,28 @@
+## 6.0.0-rc.3
+
+- Updated minimum platform interface and implementation versions
+- Fix typos and other code improvements (thanks to [michalsrutek](https://github.com/michalsrutek))
+- Fixed "runtime issue of SecTrustCopyExceptions 'This method should not be called on the main thread as it may lead to UI unresponsiveness.' when using onReceivedServerTrustAuthRequest" [#1924](https://github.com/pichillilorenzo/flutter_inappwebview/issues/1924)
+- Merged "💥 Fix iPad crash due to missing sourceView" [#1933](https://github.com/pichillilorenzo/flutter_inappwebview/pull/1933) (thanks to [michalsrutek](https://github.com/michalsrutek))
+- Merged "💥 Fix crash - remove force unwrapping from dispose method" [#1932](https://github.com/pichillilorenzo/flutter_inappwebview/pull/1932) (thanks to [michalsrutek](https://github.com/michalsrutek))
+
+## 6.0.0-rc.2
+
+- Updated minimum platform interface and implementation versions
+- Added `CustomPathHandler` class to be able to implement Android custom path handlers for `WebViewAssetLoader`
+
+## 6.0.0-rc.1
+
+- Updated minimum platform interface and implementation versions
+- Added `InAppBrowser.onMainWindowWillClose` event
+- Added `WindowType.WINDOW` for `InAppBrowserSettings.windowType`
+- Fixed "Cloudflare Turnstile failure" [#1738](https://github.com/pichillilorenzo/flutter_inappwebview/issues/1738)
+- Fixed `InAppWebViewController.callAsyncJavaScript` Android-issue when the last line of the `functionBody` parameter includes a code comment
+
+### BREAKING CHANGES
+
+- Default value of `InAppBrowserSettings.windowType` is `WindowType.WINDOW`
+
 ## 6.0.0-beta.32
 
 - Updated minimum platform interface and implementation versions
@@ -17,7 +42,7 @@
 - Fixed "onClosed not considering back navigation or up button / close button in ChromeSafariBrowser when using noHistory: true" [#1882](https://github.com/pichillilorenzo/flutter_inappwebview/issues/1882)
 - Merged "Fixed error in InterceptAjaxRequestJS 'Failed to set responseType property'" [#1904](https://github.com/pichillilorenzo/flutter_inappwebview/pull/1904) (thanks to [EArminjon](https://github.com/EArminjon))
 
-### BREAKING CHANGE
+### BREAKING CHANGES
 
 - Due to Flutter platform channels async nature, using `useShouldInterceptAjaxRequest: true` would break sync ajax requests, so that the `XMLHttpRequest.send()` will not wait for the response. To fix this issue, the default value of `InAppWebViewSettings.interceptOnlyAsyncAjaxRequests` is `true`. To intercept also sync ajax requests, this value should be `false`.
 

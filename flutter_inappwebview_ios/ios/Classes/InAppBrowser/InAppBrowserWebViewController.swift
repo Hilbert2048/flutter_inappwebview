@@ -11,7 +11,7 @@ import WebKit
 import Foundation
 
 public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelegate, UIScrollViewDelegate, UISearchBarDelegate, Disposable {
-    static var METHOD_CHANNEL_NAME_PREFIX = "com.pichillilorenzo/flutter_inappbrowser_";
+    static let METHOD_CHANNEL_NAME_PREFIX = "com.pichillilorenzo/flutter_inappbrowser_"
     
     var closeButton: UIBarButtonItem!
     var reloadButton: UIBarButtonItem!
@@ -62,8 +62,8 @@ public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelega
         channelDelegate = InAppBrowserChannelDelegate(channel: channel)
         
         var userScripts: [UserScript] = []
-        for intialUserScript in initialUserScripts {
-            userScripts.append(UserScript.fromMap(map: intialUserScript, windowId: windowId)!)
+        for initialUserScript in initialUserScripts {
+            userScripts.append(UserScript.fromMap(map: initialUserScript, windowId: windowId)!)
         }
         
         let preWebviewConfiguration = InAppWebView.preWKWebViewConfiguration(settings: webViewSettings)
@@ -145,7 +145,7 @@ public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelega
             }
         }
         
-        if let wId = windowId {
+        if windowId != nil {
             channelDelegate?.onBrowserCreated()
             webView?.runWindowBeforeCreatedCallbacks()
         } else {
@@ -153,7 +153,7 @@ public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelega
                 if let contentBlockers = webView?.settings?.contentBlockers, contentBlockers.count > 0 {
                     do {
                         let jsonData = try JSONSerialization.data(withJSONObject: contentBlockers, options: [])
-                        let blockRules = String(data: jsonData, encoding: String.Encoding.utf8)
+                        let blockRules = String(data: jsonData, encoding: .utf8)
                         WKContentRuleListStore.default().compileContentRuleList(
                             forIdentifier: "ContentBlockingRules",
                             encodedContentRuleList: blockRules) { (contentRuleList, error) in
@@ -641,16 +641,16 @@ public class InAppBrowserWebViewController: UIViewController, InAppBrowserDelega
         webView?.removeFromSuperview()
         webView = nil
         view = nil
-        if previousStatusBarStyle != -1 {
-            UIApplication.shared.statusBarStyle = UIStatusBarStyle(rawValue: previousStatusBarStyle)!
+        if previousStatusBarStyle != -1, let statusBarStyle = UIStatusBarStyle(rawValue: previousStatusBarStyle) {
+            UIApplication.shared.statusBarStyle = statusBarStyle
         }
         transitioningDelegate = nil
-        searchBar.delegate = nil
-        closeButton.target = nil
-        forwardButton.target = nil
-        backButton.target = nil
-        reloadButton.target = nil
-        shareButton.target = nil
+        searchBar?.delegate = nil
+        closeButton?.target = nil
+        forwardButton?.target = nil
+        backButton?.target = nil
+        reloadButton?.target = nil
+        shareButton?.target = nil
         menuButton?.target = nil
         plugin = nil
     }

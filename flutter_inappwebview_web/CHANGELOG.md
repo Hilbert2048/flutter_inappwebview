@@ -1,6 +1,18 @@
+## 1.0.7
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.9`
+
+## 1.0.6
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.8`
+
+## 1.0.5
+
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.7`
+
 ## 1.0.4
 
-- Updated `flutter_inappwebview_platform_interface` version dependency to `1.0.6`
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.6`
 - Updated `CookieManager` methods return value
 
 ## 1.0.3
@@ -10,11 +22,11 @@
 
 ## 1.0.2
 
-- Updated `flutter_inappwebview_platform_interface` version dependency to `1.0.5`
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.5`
 
 ## 1.0.1
 
-- Updated `flutter_inappwebview_platform_interface` version dependency to `1.0.2`
+- Updated `flutter_inappwebview_platform_interface` version dependency to `^1.0.2`
 
 ## 1.0.0
 

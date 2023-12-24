@@ -14,7 +14,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                             WKDownloadDelegate,
                             PullToRefreshDelegate,
                             Disposable {
-    static var METHOD_CHANNEL_NAME_PREFIX = "com.pichillilorenzo/flutter_inappwebview_"
+    static let METHOD_CHANNEL_NAME_PREFIX = "com.pichillilorenzo/flutter_inappwebview_"
 
     var id: Any? // viewId
     var plugin: SwiftFlutterPlugin?
@@ -26,14 +26,14 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
     var settings: InAppWebViewSettings?
     var pullToRefreshControl: PullToRefreshControl?
     var findInteractionController: FindInteractionController?
-    var webMessageChannels: [String:WebMessageChannel] = [:]
+    var webMessageChannels: [String: WebMessageChannel] = [:]
     var webMessageListeners: [WebMessageListener] = []
     var currentOriginalUrl: URL?
     var inFullscreen = false
     var preventGestureDelay = false
     
-    static var sslCertificatesMap: [String: SslCertificate] = [:] // [URL host name : SslCertificate]
-    static var credentialsProposed: [URLCredential] = []
+    private static var sslCertificatesMap: [String: SslCertificate] = [:] // [URL host name : SslCertificate]
+    private static var credentialsProposed: [URLCredential] = []
     
     var lastScrollX: CGFloat = 0
     var lastScrollY: CGFloat = 0
@@ -103,14 +103,14 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         set {
             super.frame = newValue
             
-            self.scrollView.contentInset = UIEdgeInsets.zero;
+            self.scrollView.contentInset = .zero
             if #available(iOS 11, *) {
                 // Above iOS 11, adjust contentInset to compensate the adjustedContentInset so the sum will
                 // always be 0.
                 if (scrollView.adjustedContentInset != UIEdgeInsets.zero) {
-                    let insetToAdjust = self.scrollView.adjustedContentInset;
+                    let insetToAdjust = self.scrollView.adjustedContentInset
                     scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left,
-                                                                bottom: -insetToAdjust.bottom, right: -insetToAdjust.right);
+                                                                bottom: -insetToAdjust.bottom, right: -insetToAdjust.right)
                 }
             }
         }
@@ -1268,7 +1268,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             if contentBlockers.count > 0 {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: contentBlockers, options: [])
-                    let blockRules = String(data: jsonData, encoding: String.Encoding.utf8)
+                    let blockRules = String(data: jsonData, encoding: .utf8)
                     WKContentRuleListStore.default().compileContentRuleList(
                         forIdentifier: "ContentBlockingRules",
                         encodedContentRuleList: blockRules) { (contentRuleList, error) in
@@ -1386,7 +1386,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         var jsToInject = source
         if let wrapper = jsWrapper {
             let jsonData: Data? = try? JSONSerialization.data(withJSONObject: [source], options: [])
-            let sourceArrayString = String(data: jsonData!, encoding: String.Encoding.utf8)
+            let sourceArrayString = String(data: jsonData!, encoding: .utf8)
             let sourceString: String? = (sourceArrayString! as NSString).substring(with: NSRange(location: 1, length: (sourceArrayString?.count ?? 0) - 2))
             jsToInject = String(format: wrapper, sourceString!)
         }
@@ -1418,7 +1418,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         var jsToInject = source
         if let wrapper = jsWrapper {
             let jsonData: Data? = try? JSONSerialization.data(withJSONObject: [source], options: [])
-            let sourceArrayString = String(data: jsonData!, encoding: String.Encoding.utf8)
+            let sourceArrayString = String(data: jsonData!, encoding: .utf8)
             let sourceString: String? = (sourceArrayString! as NSString).substring(with: NSRange(location: 1, length: (sourceArrayString?.count ?? 0) - 2))
             jsToInject = String(format: wrapper, sourceString!)
         }
@@ -2000,7 +2000,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                     switch action {
                         case 0:
                             InAppWebView.credentialsProposed = []
-                            // used .performDefaultHandling to mantain consistency with Android
+                            // used .performDefaultHandling to maintain consistency with Android
                             // because .cancelAuthenticationChallenge will call webView(_:didFail:withError:)
                             completionHandler(.performDefaultHandling, nil)
                             //completionHandler(.cancelAuthenticationChallenge, nil)
@@ -2097,10 +2097,13 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                             completionHandler(.cancelAuthenticationChallenge, nil)
                             break
                         case 1:
-                            let exceptions = SecTrustCopyExceptions(serverTrust)
-                            SecTrustSetExceptions(serverTrust, exceptions)
-                            let credential = URLCredential(trust: serverTrust)
-                            completionHandler(.useCredential, credential)
+                            // workaround for https://github.com/pichillilorenzo/flutter_inappwebview/issues/1924
+                            DispatchQueue.global(qos: .background).async {
+                                let exceptions = SecTrustCopyExceptions(serverTrust)
+                                SecTrustSetExceptions(serverTrust, exceptions)
+                                let credential = URLCredential(trust: serverTrust)
+                                completionHandler(.useCredential, credential)
+                            }
                             break
                         default:
                             InAppWebView.credentialsProposed = []
@@ -2208,17 +2211,16 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
     }
     
     struct IdentityAndTrust {
-
-        var identityRef:SecIdentity
-        var trust:SecTrust
-        var certArray:AnyObject
+        var identityRef: SecIdentity
+        var trust: SecTrust
+        var certArray: AnyObject
     }
 
-    func extractIdentity(PKCS12Data:NSData, password: String) -> IdentityAndTrust? {
-        var identityAndTrust:IdentityAndTrust?
-        var securityError:OSStatus = errSecSuccess
+    func extractIdentity(PKCS12Data: NSData, password: String) -> IdentityAndTrust? {
+        var identityAndTrust: IdentityAndTrust?
+        var securityError: OSStatus = errSecSuccess
 
-        var importResult: CFArray? = nil
+        var importResult: CFArray?
         securityError = SecPKCS12Import(
             PKCS12Data as NSData,
             [kSecImportExportPassphrase as String: password] as NSDictionary,
@@ -2226,27 +2228,27 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         )
 
         if securityError == errSecSuccess {
-            let certItems:CFArray = importResult! as CFArray;
-            let certItemsArray:Array = certItems as Array
-            let dict:AnyObject? = certItemsArray.first;
-            if let certEntry:Dictionary = dict as? Dictionary<String, AnyObject> {
+            let certItems: CFArray = importResult! as CFArray
+            let certItemsArray: Array = certItems as Array
+            let dict: AnyObject? = certItemsArray.first
+            if let certEntry: Dictionary = dict as? Dictionary<String, AnyObject> {
                 // grab the identity
-                let identityPointer:AnyObject? = certEntry["identity"];
-                let secIdentityRef:SecIdentity = (identityPointer as! SecIdentity?)!;
+                let identityPointer: AnyObject? = certEntry["identity"]
+                let secIdentityRef:SecIdentity = (identityPointer as! SecIdentity?)!
                 // grab the trust
-                let trustPointer:AnyObject? = certEntry["trust"];
-                let trustRef:SecTrust = trustPointer as! SecTrust;
+                let trustPointer: AnyObject? = certEntry["trust"]
+                let trustRef:SecTrust = trustPointer as! SecTrust
                 // grab the cert
-                let chainPointer:AnyObject? = certEntry["chain"];
-                identityAndTrust = IdentityAndTrust(identityRef: secIdentityRef, trust: trustRef, certArray:  chainPointer!);
+                let chainPointer: AnyObject? = certEntry["chain"]
+                identityAndTrust = IdentityAndTrust(identityRef: secIdentityRef, trust: trustRef, certArray:  chainPointer!)
             }
         } else {
             print("Security Error: " + securityError.description)
             if #available(iOS 11.3, *) {
-                print(SecCopyErrorMessageString(securityError,nil) ?? "")
+                print(SecCopyErrorMessageString(securityError, nil) ?? "")
             }
         }
-        return identityAndTrust;
+        return identityAndTrust
     }
     
     func createAlertDialog(message: String?, responseMessage: String?, confirmButtonTitle: String?, completionHandler: @escaping () -> Void) {
@@ -2257,7 +2259,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         
         alertController.addAction(UIAlertAction(title: okButton, style: UIAlertAction.Style.default) {
             _ in completionHandler()}
-        );
+        )
         
         guard let presentingViewController = inAppBrowserDelegate != nil ? inAppBrowserDelegate as? InAppBrowserWebViewController : window?.rootViewController else {
             completionHandler()
@@ -2481,16 +2483,16 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         let disableHorizontalScroll = settings?.disableHorizontalScroll ?? false
         if startedByUser {
             if disableVerticalScroll && disableHorizontalScroll {
-                scrollView.contentOffset = CGPoint(x: lastScrollX, y: lastScrollY);
+                scrollView.contentOffset = CGPoint(x: lastScrollX, y: lastScrollY)
             }
             else if disableVerticalScroll {
                 if scrollView.contentOffset.y >= 0 || scrollView.contentOffset.y < 0 {
-                    scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: lastScrollY);
+                    scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: lastScrollY)
                 }
             }
             else if disableHorizontalScroll {
                 if scrollView.contentOffset.x >= 0 || scrollView.contentOffset.x < 0 {
-                    scrollView.contentOffset = CGPoint(x: lastScrollX, y: scrollView.contentOffset.y);
+                    scrollView.contentOffset = CGPoint(x: lastScrollX, y: scrollView.contentOffset.y)
                 }
             }
         }
@@ -2807,24 +2809,24 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             switch (message.name) {
                 case "consoleLog":
                     messageLevel = 1
-                    break;
+                    break
                 case "consoleDebug":
                     // on Android, console.debug is TIP
                     messageLevel = 0
-                    break;
+                    break
                 case "consoleError":
                     messageLevel = 3
-                    break;
+                    break
                 case "consoleInfo":
                     // on Android, console.info is LOG
                     messageLevel = 1
-                    break;
+                    break
                 case "consoleWarn":
                     messageLevel = 2
-                    break;
+                    break
                 default:
                     messageLevel = 1
-                    break;
+                    break
             }
             let consoleMessage = body["message"] as? String ?? ""
             

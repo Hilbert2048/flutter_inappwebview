@@ -1,5 +1,5 @@
 //
-//  CustomeSchemeHandler.swift
+//  CustomSchemeHandler.swift
 //  flutter_inappwebview
 //
 //  Created by Lorenzo Pichilli on 25/10/2019.
@@ -10,8 +10,8 @@ import Foundation
 import WebKit
 
 @available(iOS 11.0, *)
-public class CustomSchemeHandler : NSObject, WKURLSchemeHandler {
-    var schemeHandlers: [Int:WKURLSchemeTask] = [:]
+public class CustomSchemeHandler: NSObject, WKURLSchemeHandler {
+    var schemeHandlers: [Int: WKURLSchemeTask] = [:]
     
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         schemeHandlers[urlSchemeTask.hash] = urlSchemeTask

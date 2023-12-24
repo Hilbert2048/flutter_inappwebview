@@ -27,8 +27,8 @@ public class FlutterWebViewController: NSObject, /*FlutterPlatformView,*/ Dispos
         
         var userScripts: [UserScript] = []
         if let initialUserScripts = initialUserScripts {
-            for intialUserScript in initialUserScripts {
-                userScripts.append(UserScript.fromMap(map: intialUserScript, windowId: windowId)!)
+            for initialUserScript in initialUserScripts {
+                userScripts.append(UserScript.fromMap(map: initialUserScript, windowId: windowId)!)
             }
         }
         
@@ -104,7 +104,7 @@ public class FlutterWebViewController: NSObject, /*FlutterPlatformView,*/ Dispos
                 if let contentBlockers = webView.settings?.contentBlockers, contentBlockers.count > 0 {
                     do {
                         let jsonData = try JSONSerialization.data(withJSONObject: contentBlockers, options: [])
-                        let blockRules = String(data: jsonData, encoding: String.Encoding.utf8)
+                        let blockRules = String(data: jsonData, encoding: .utf8)
                         WKContentRuleListStore.default().compileContentRuleList(
                             forIdentifier: "ContentBlockingRules",
                             encodedContentRuleList: blockRules) { (contentRuleList, error) in
