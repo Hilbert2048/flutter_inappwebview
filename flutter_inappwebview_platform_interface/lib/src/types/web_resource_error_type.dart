@@ -1000,4 +1000,20 @@ class WebResourceErrorType_ {
   ])
   static const VALID_PROXY_AUTHENTICATION_REQUIRED =
       WebResourceErrorType_._internal("VALID_PROXY_AUTHENTICATION_REQUIRED");
+
+  ///A download task failed to decode an encoded file after downloading.
+  @EnumSupportedPlatforms(platforms: [
+    EnumIOSPlatform(
+        apiName: 'URLError.frameLoadInterrupted',
+        apiUrl:
+        'https://developer.apple.com/',
+        value: 102),
+    EnumMacOSPlatform(
+        apiName: 'URLError.frameLoadInterrupted',
+        apiUrl:
+        'https://developer.apple.com/',
+        value: 102)
+  ])
+  static const Frame_Load_Interrupted =
+  WebResourceErrorType_._internal("frameLoadInterrupted");
 }
