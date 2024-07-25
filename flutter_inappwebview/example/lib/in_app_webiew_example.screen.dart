@@ -117,6 +117,7 @@ class _InAppWebViewExampleScreenState extends State<InAppWebViewExampleScreen> {
               children: [
                 InAppWebView(
                   key: webViewKey,
+                  webViewEnvironment: webViewEnvironment,
                   initialUrlRequest:
                       URLRequest(url: WebUri('https://flutter.dev')),
                   // initialUrlRequest:
