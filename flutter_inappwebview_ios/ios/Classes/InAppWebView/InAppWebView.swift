@@ -1947,7 +1947,7 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         InAppWebView.credentialsProposed = []
         
         var urlError: URL = url ?? URL(string: "about:blank")!
-        var errorCode = -1
+        var errorCode = error._code
         var errorDescription = "domain=\(error._domain), code=\(error._code), \(error.localizedDescription)"
         
         if let info = error as? URLError {
