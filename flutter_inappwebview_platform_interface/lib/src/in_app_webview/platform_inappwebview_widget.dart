@@ -40,8 +40,10 @@ class PlatformInAppWebViewWidgetCreationParams
       super.shouldOverrideUrlLoading,
       super.onLoadResource,
       super.onScrollChanged,
-      @Deprecated('Use onDownloadStartRequest instead') super.onDownloadStart,
+      @Deprecated('Use onDownloadStarting instead') super.onDownloadStart,
+      @Deprecated('Use onDownloadStarting instead')
       super.onDownloadStartRequest,
+      super.onDownloadStarting,
       @Deprecated('Use onLoadResourceWithCustomScheme instead')
       super.onLoadResourceCustomScheme,
       super.onLoadResourceWithCustomScheme,
@@ -127,6 +129,9 @@ class PlatformInAppWebViewWidgetCreationParams
       super.onCameraCaptureStateChanged,
       super.onMicrophoneCaptureStateChanged,
       super.onContentSizeChanged,
+      super.onProcessFailed,
+      super.onAcceleratorKeyPressed,
+      super.onShowFileChooser,
       super.initialUrlRequest,
       super.initialFile,
       super.initialData,

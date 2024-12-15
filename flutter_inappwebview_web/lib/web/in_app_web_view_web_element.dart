@@ -1,19 +1,19 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:developer';
+import 'dart:js_interop';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview_platform_interface/flutter_inappwebview_platform_interface.dart';
-import 'dart:js_interop';
-import 'dart:developer';
 import 'package:web/web.dart';
 
 import 'headless_inappwebview_manager.dart';
-import 'web_platform_manager.dart';
 import 'js_bridge.dart';
+import 'web_platform_manager.dart';
 
 extension on HTMLIFrameElement {
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/csp
   external set csp(String? value);
+
   external String? get csp;
 }
 
@@ -65,7 +65,9 @@ class InAppWebViewWebElement implements Disposable {
     });
 
     jsWebView = flutterInAppWebView?.createFlutterInAppWebView(
-        _viewId, iframe, iframeContainer);
+        _viewId is int ? (_viewId as int).toJS : _viewId.toString().toJS,
+        iframe,
+        iframeContainer);
   }
 
   /// Handles method calls over the MethodChannel of this plugin.
@@ -208,7 +210,9 @@ class InAppWebViewWebElement implements Disposable {
           initialFile = webView.initialFile;
 
           jsWebView = flutterInAppWebView?.createFlutterInAppWebView(
-              _viewId, iframe, iframeContainer);
+              _viewId is int ? (_viewId as int).toJS : _viewId.toString().toJS,
+              iframe,
+              iframeContainer);
         }
       }
     }
@@ -230,6 +234,8 @@ class InAppWebViewWebElement implements Disposable {
           iframe.referrerPolicy;
       iframe.name = settings!.iframeName ?? iframe.name;
       iframe.csp = settings!.iframeCsp ?? iframe.csp;
+      iframe.role = settings!.iframeRole ?? iframe.role;
+      iframe.ariaHidden = settings!.iframeAriaHidden ?? iframe.ariaHidden;
 
       if (settings!.iframeSandbox != null &&
           settings!.iframeSandbox != Sandbox.ALLOW_ALL) {
@@ -469,6 +475,12 @@ class InAppWebViewWebElement implements Disposable {
     }
     if (settings!.iframeCsp != newSettings.iframeCsp) {
       iframe.csp = newSettings.iframeCsp;
+    }
+    if (settings!.iframeRole != newSettings.iframeRole) {
+      iframe.role = newSettings.iframeRole;
+    }
+    if (settings!.iframeAriaHidden != newSettings.iframeAriaHidden) {
+      iframe.ariaHidden = newSettings.iframeAriaHidden;
     }
 
     if (settings!.iframeSandbox != newSettings.iframeSandbox) {

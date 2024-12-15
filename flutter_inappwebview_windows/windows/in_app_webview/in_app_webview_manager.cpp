@@ -5,6 +5,7 @@
 #include <windows.graphics.capture.h>
 
 #include "../in_app_webview/in_app_webview_settings.h"
+#include "../plugin_scripts_js/javascript_bridge_js.h"
 #include "../types/url_request.h"
 #include "../types/user_script.h"
 #include "../utils/flutter.h"
@@ -18,29 +19,37 @@ namespace flutter_inappwebview_plugin
 {
   InAppWebViewManager::InAppWebViewManager(const FlutterInappwebviewWindowsPlugin* plugin)
     : plugin(plugin),
-    ChannelDelegate(plugin->registrar->messenger(), InAppWebViewManager::METHOD_CHANNEL_NAME),
-    rohelper_(std::make_unique<rx::RoHelper>(RO_INIT_SINGLETHREADED))
+    ChannelDelegate(plugin->registrar->messenger(), InAppWebViewManager::METHOD_CHANNEL_NAME)
   {
-    if (rohelper_->WinRtAvailable()) {
-      DispatcherQueueOptions options{ sizeof(DispatcherQueueOptions),
-                                     DQTYPE_THREAD_CURRENT, DQTAT_COM_STA };
+    if (!rohelper_) {
+      rohelper_ = std::make_unique<rx::RoHelper>(RO_INIT_SINGLETHREADED);
 
-      if (FAILED(rohelper_->CreateDispatcherQueueController(
-        options, dispatcher_queue_controller_.put()))) {
-        std::cerr << "Creating DispatcherQueueController failed." << std::endl;
-        return;
+      if (rohelper_->WinRtAvailable()) {
+        DispatcherQueueOptions options{ sizeof(DispatcherQueueOptions),
+                                       DQTYPE_THREAD_CURRENT, DQTAT_COM_STA };
+
+        if (FAILED(rohelper_->CreateDispatcherQueueController(
+          options, dispatcher_queue_controller_.put()))) {
+          std::cerr << "Creating DispatcherQueueController failed." << std::endl;
+          return;
+        }
+
+        if (!isGraphicsCaptureSessionSupported()) {
+          std::cerr << "Windows::Graphics::Capture::GraphicsCaptureSession is not "
+            "supported."
+            << std::endl;
+          return;
+        }
+
+        graphics_context_ = std::make_unique<GraphicsContext>(rohelper_.get());
+        compositor_ = graphics_context_->CreateCompositor();
+        if (compositor_) {
+          // fix for KernelBase.dll RaiseFailFastException
+          // when app is closing 
+          compositor_->AddRef();
+        }
+        valid_ = graphics_context_->IsValid();
       }
-
-      if (!isGraphicsCaptureSessionSupported()) {
-        std::cerr << "Windows::Graphics::Capture::GraphicsCaptureSession is not "
-          "supported."
-          << std::endl;
-        return;
-      }
-
-      graphics_context_ = std::make_unique<GraphicsContext>(rohelper_.get());
-      compositor_ = graphics_context_->CreateCompositor();
-      valid_ = graphics_context_->IsValid();
     }
 
     windowClass_.lpszClassName = CustomPlatformView::CLASS_NAME;
@@ -66,6 +75,10 @@ namespace flutter_inappwebview_plugin
     else if (string_equals(methodName, "dispose")) {
       auto id = get_fl_map_value<int64_t>(*arguments, "id");
       if (map_contains(webViews, (uint64_t)id)) {
+        auto platformView = webViews.at(id).get();
+        if (platformView) {
+          platformView->UnregisterMethodCallHandler();
+        }
         webViews.erase(id);
       }
       result->Success();
@@ -75,6 +88,14 @@ namespace flutter_inappwebview_plugin
       disposeKeepAlive(keepAliveId);
       result->Success();
     }
+    else if (string_equals(methodName, "setJavaScriptBridgeName")) {
+      auto bridgeName = get_fl_map_value<std::string>(*arguments, "bridgeName");
+      JavaScriptBridgeJS::set_JAVASCRIPT_BRIDGE_NAME(bridgeName);
+      result->Success();
+    }
+    else if (string_equals(methodName, "getJavaScriptBridgeName")) {
+      result->Success(JavaScriptBridgeJS::get_JAVASCRIPT_BRIDGE_NAME());
+    }
     else {
       result->NotImplemented();
     }
@@ -83,6 +104,11 @@ namespace flutter_inappwebview_plugin
   void InAppWebViewManager::createInAppWebView(const flutter::EncodableMap* arguments, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
   {
     auto result_ = std::shared_ptr<flutter::MethodResult<flutter::EncodableValue>>(std::move(result));
+
+    if (!plugin) {
+      result_->Error("0", "Cannot create the InAppWebView instance!");
+      return;
+    }
 
     auto settingsMap = get_fl_map_value<flutter::EncodableMap>(*arguments, "initialSettings");
     auto urlRequestMap = get_optional_fl_map_value<flutter::EncodableMap>(*arguments, "initialUrlRequest");
@@ -119,13 +145,14 @@ namespace flutter_inappwebview_plugin
     auto webViewEnvironment = webViewEnvironmentId.has_value() && map_contains(plugin->webViewEnvironmentManager->webViewEnvironments, webViewEnvironmentId.value())
       ? plugin->webViewEnvironmentManager->webViewEnvironments.at(webViewEnvironmentId.value()).get() : nullptr;
 
-    InAppWebView::createInAppWebViewEnv(hwnd, true, webViewEnvironment,
+    auto initialSettings = std::make_shared<InAppWebViewSettings>(settingsMap);
+
+    InAppWebView::createInAppWebViewEnv(hwnd, true, webViewEnvironment, initialSettings,
       [=](wil::com_ptr<ICoreWebView2Environment> webViewEnv,
         wil::com_ptr<ICoreWebView2Controller> webViewController,
         wil::com_ptr<ICoreWebView2CompositionController> webViewCompositionController)
       {
-        if (webViewEnv && webViewController && webViewCompositionController) {
-          auto initialSettings = std::make_unique<InAppWebViewSettings>(settingsMap);
+        if (plugin && webViewEnv && webViewController && webViewCompositionController) {
           std::optional<std::vector<std::shared_ptr<UserScript>>> initialUserScripts = initialUserScriptList.has_value() ?
             functional_map(initialUserScriptList.value(), [](const flutter::EncodableValue& map) { return std::make_shared<UserScript>(std::get<flutter::EncodableMap>(map)); }) :
             std::optional<std::vector<std::shared_ptr<UserScript>>>{};
@@ -185,6 +212,10 @@ namespace flutter_inappwebview_plugin
   void InAppWebViewManager::disposeKeepAlive(const std::string& keepAliveId)
   {
     if (map_contains(keepAliveWebViews, keepAliveId)) {
+      auto platformView = keepAliveWebViews.at(keepAliveId).get();
+      if (platformView) {
+        platformView->UnregisterMethodCallHandler();
+      }
       keepAliveWebViews.erase(keepAliveId);
     }
   }

@@ -176,6 +176,26 @@ namespace flutter_inappwebview_plugin
       [](const T v) { return static_cast<T>(std::toupper(v)); });
     return s2;
   }
+
+  template <typename T>
+  bool starts_with(const std::basic_string<T>& str, const std::basic_string<T>& prefix)
+  {
+    return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
+  }
+
+  template <typename T>
+  bool ends_with(const std::basic_string<T>& str, const std::basic_string<T>& suffix)
+  {
+    return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+  }
+
+  constexpr uint32_t string_hash(const std::string_view data) noexcept
+  {
+    uint32_t hash = 5381;
+    for (const auto& e : data)
+      hash = ((hash << 5) + hash) + e;
+    return hash;
+  };
 }
 
 #endif //FLUTTER_INAPPWEBVIEW_PLUGIN_UTIL_STRING_H_

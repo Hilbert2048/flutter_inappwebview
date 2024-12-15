@@ -186,12 +186,21 @@ namespace flutter_inappwebview_plugin
     event_channel_->SetStreamHandler(std::move(handler));
   }
 
+  void CustomPlatformView::UnregisterMethodCallHandler() const
+  {
+    if (method_channel_) {
+      method_channel_->SetMethodCallHandler(nullptr);
+      if (view && view->channelDelegate) {
+        view->channelDelegate->UnregisterMethodCallHandler();
+      }
+    }
+  }
+
   CustomPlatformView::~CustomPlatformView()
   {
     debugLog("dealloc CustomPlatformView");
-    method_channel_->SetMethodCallHandler(nullptr);
     event_sink_ = nullptr;
-    texture_registrar_->UnregisterTexture(texture_id_);
+    texture_registrar_->UnregisterTexture(texture_id_, nullptr);
   }
 
   void CustomPlatformView::RegisterEventHandlers()
@@ -273,14 +282,15 @@ namespace flutter_inappwebview_plugin
     if (method_name.compare(kMethodSetPointerButton) == 0) {
       const auto& map = std::get<flutter::EncodableMap>(*method_call.arguments());
 
+      const auto kind = map.find(flutter::EncodableValue("kind"));
       const auto button = map.find(flutter::EncodableValue("button"));
-      const auto isDown = map.find(flutter::EncodableValue("isDown"));
-      if (button != map.end() && isDown != map.end()) {
+      if (kind != map.end() && button != map.end()) {
+        const auto kindValue = std::get_if<int32_t>(&kind->second);
         const auto buttonValue = std::get_if<int32_t>(&button->second);
-        const auto isDownValue = std::get_if<bool>(&isDown->second);
-        if (buttonValue && isDownValue && view) {
+        if (kindValue && buttonValue && view) {
           view->setPointerButtonState(
-            static_cast<flutter_inappwebview_plugin::InAppWebViewPointerButton>(*buttonValue), *isDownValue);
+            static_cast<InAppWebViewPointerEventKind>(*kindValue),
+            static_cast<InAppWebViewPointerButton>(*buttonValue));
           return result->Success();
         }
       }
