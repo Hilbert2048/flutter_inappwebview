@@ -561,6 +561,24 @@ class WebResourceErrorType {
     return null;
   });
 
+  ///A download task failed to decode an encoded file after downloading.
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- iOS ([Official API - URLError.frameLoadInterrupted](https://developer.apple.com/))
+  ///- MacOS ([Official API - URLError.frameLoadInterrupted](https://developer.apple.com/))
+  static final Frame_Load_Interrupted =
+      WebResourceErrorType._internalMultiPlatform('frameLoadInterrupted', () {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+        return 102;
+      case TargetPlatform.macOS:
+        return 102;
+      default:
+        break;
+    }
+    return null;
+  });
+
   ///Generic file error.
   ///
   ///**Officially Supported Platforms/Implementations**:
@@ -1179,6 +1197,7 @@ class WebResourceErrorType {
     WebResourceErrorType.FAILED_SSL_HANDSHAKE,
     WebResourceErrorType.FILE_IS_DIRECTORY,
     WebResourceErrorType.FILE_NOT_FOUND,
+    WebResourceErrorType.Frame_Load_Interrupted,
     WebResourceErrorType.GENERIC_FILE_ERROR,
     WebResourceErrorType.HOST_LOOKUP,
     WebResourceErrorType.INTERNATIONAL_ROAMING_OFF,
