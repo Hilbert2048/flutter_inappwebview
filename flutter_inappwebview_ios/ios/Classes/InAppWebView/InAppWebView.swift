@@ -97,6 +97,8 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
         panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.delegate = self
         panGestureRecognizer.addTarget(self, action: #selector(endDraggingDetected))
+        contentMode = .scaleAspectFill
+        autoresizesSubviews = true
     }
     
     override public var frame: CGRect {
