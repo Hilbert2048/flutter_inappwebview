@@ -637,11 +637,11 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                 if settings.useOnLoadResource {
                     configuration.userContentController.addPluginScript(OnLoadResourceJS.ON_LOAD_RESOURCE_JS_PLUGIN_SCRIPT(allowedOriginRules: pluginScriptsOriginAllowList, forMainFrameOnly: pluginScriptsForMainFrameOnly))
                 }
-                if !settings.supportZoom {
-                    configuration.userContentController.addPluginScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT(allowedOriginRules: pluginScriptsOriginAllowList))
-                } else if settings.enableViewportScale {
-                    configuration.userContentController.addPluginScript(EnableViewportScaleJS.ENABLE_VIEWPORT_SCALE_JS_PLUGIN_SCRIPT(allowedOriginRules: pluginScriptsOriginAllowList))
-                }
+                // if !settings.supportZoom {
+                //     configuration.userContentController.addPluginScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT(allowedOriginRules: pluginScriptsOriginAllowList))
+                // } else if settings.enableViewportScale {
+                //     configuration.userContentController.addPluginScript(EnableViewportScaleJS.ENABLE_VIEWPORT_SCALE_JS_PLUGIN_SCRIPT(allowedOriginRules: pluginScriptsOriginAllowList))
+                // }
             }
         }
         configuration.userContentController.addUserOnlyScripts(initialUserScripts)
@@ -1107,19 +1107,19 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             }
         }
         
-        if newSettingsMap["supportZoom"] != nil && settings?.supportZoom != newSettings.supportZoom {
-            if newSettings.supportZoom {
-                if configuration.userContentController.containsPluginScript(with: SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT_GROUP_NAME) {
-                    configuration.userContentController.removePluginScripts(with: SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT_GROUP_NAME, shouldAddPreviousScripts: false)
-                    evaluateJavaScript(SupportZoomJS.SUPPORT_ZOOM_JS_SOURCE())
-                }
-            } else {
-                evaluateJavaScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_SOURCE)
-                if javaScriptBridgeEnabled {
-                    configuration.userContentController.addPluginScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT(allowedOriginRules: newSettings.pluginScriptsOriginAllowList))
-                }
-            }
-        }
+        // if newSettingsMap["supportZoom"] != nil && settings?.supportZoom != newSettings.supportZoom {
+        //     if newSettings.supportZoom {
+        //         if configuration.userContentController.containsPluginScript(with: SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT_GROUP_NAME) {
+        //             configuration.userContentController.removePluginScripts(with: SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT_GROUP_NAME, shouldAddPreviousScripts: false)
+        //             evaluateJavaScript(SupportZoomJS.SUPPORT_ZOOM_JS_SOURCE())
+        //         }
+        //     } else {
+        //         evaluateJavaScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_SOURCE)
+        //         if javaScriptBridgeEnabled {
+        //             configuration.userContentController.addPluginScript(SupportZoomJS.NOT_SUPPORT_ZOOM_JS_PLUGIN_SCRIPT(allowedOriginRules: newSettings.pluginScriptsOriginAllowList))
+        //         }
+        //     }
+        // }
         
         if newSettingsMap["useOnLoadResource"] != nil && settings?.useOnLoadResource != newSettings.useOnLoadResource {
             if let applePayAPIEnabled = settings?.applePayAPIEnabled, !applePayAPIEnabled {
