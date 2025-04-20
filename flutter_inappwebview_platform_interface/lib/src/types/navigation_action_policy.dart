@@ -20,4 +20,7 @@ class NavigationActionPolicy_ {
   ///
   ///**NOTE**: available only on iOS 14.5+. It will fallback to [CANCEL].
   static const DOWNLOAD = const NavigationActionPolicy_._internal(2);
+
+  ///Allow the navigation to continue.
+  static const ALLOW_WITHOUT_TRYING_APPLINK = const NavigationActionPolicy_._internal(3);
 }

@@ -1355,6 +1355,8 @@ class WebResourceErrorType {
         return 'FILE_IS_DIRECTORY';
       case 'FILE_NOT_FOUND':
         return 'FILE_NOT_FOUND';
+      case 'frameLoadInterrupted':
+        return 'Frame_Load_Interrupted';
       case 'GENERIC_FILE_ERROR':
         return 'GENERIC_FILE_ERROR';
       case 'HOST_LOOKUP':

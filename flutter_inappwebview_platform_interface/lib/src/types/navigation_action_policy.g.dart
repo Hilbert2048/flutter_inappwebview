@@ -20,6 +20,10 @@ class NavigationActionPolicy {
   ///Allow the navigation to continue.
   static const ALLOW = NavigationActionPolicy._internal(1, 1);
 
+  ///Allow the navigation to continue.
+  static const ALLOW_WITHOUT_TRYING_APPLINK =
+      NavigationActionPolicy._internal(3, 3);
+
   ///Cancel the navigation.
   static const CANCEL = NavigationActionPolicy._internal(0, 0);
 
@@ -31,6 +35,7 @@ class NavigationActionPolicy {
   ///Set of all values of [NavigationActionPolicy].
   static final Set<NavigationActionPolicy> values = [
     NavigationActionPolicy.ALLOW,
+    NavigationActionPolicy.ALLOW_WITHOUT_TRYING_APPLINK,
     NavigationActionPolicy.CANCEL,
     NavigationActionPolicy.DOWNLOAD,
   ].toSet();
@@ -102,6 +107,8 @@ class NavigationActionPolicy {
     switch (_value) {
       case 1:
         return 'ALLOW';
+      case 3:
+        return 'ALLOW_WITHOUT_TRYING_APPLINK';
       case 0:
         return 'CANCEL';
       case 2:
