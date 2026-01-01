@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_inappwebview_platform_interface/flutter_inappwebview_platform_interface.dart';
 
 /// Object specifying creation parameters for creating a [AndroidCookieManager].
@@ -44,6 +43,14 @@ class AndroidCookieManager extends PlatformCookieManager
     initMethodCallHandler();
   }
 
+  static final AndroidCookieManager _staticValue = AndroidCookieManager(
+      AndroidCookieManagerCreationParams(
+          PlatformCookieManagerCreationParams()));
+
+  factory AndroidCookieManager.static() {
+    return _staticValue;
+  }
+
   static AndroidCookieManager? _instance;
 
   ///Gets the [AndroidCookieManager] shared instance.
@@ -76,7 +83,6 @@ class AndroidCookieManager extends PlatformCookieManager
       PlatformInAppWebViewController? webViewController}) async {
     assert(url.toString().isNotEmpty);
     assert(name.isNotEmpty);
-    assert(value.isNotEmpty);
     assert(path.isNotEmpty);
 
     Map<String, dynamic> args = <String, dynamic>{};

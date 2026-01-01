@@ -46,6 +46,13 @@ class MacOSCookieManager extends PlatformCookieManager with ChannelController {
     initMethodCallHandler();
   }
 
+  static final MacOSCookieManager _staticValue = MacOSCookieManager(
+      MacOSCookieManagerCreationParams(PlatformCookieManagerCreationParams()));
+
+  factory MacOSCookieManager.static() {
+    return _staticValue;
+  }
+
   static MacOSCookieManager? _instance;
 
   ///Gets the [MacOSCookieManager] shared instance.
@@ -80,7 +87,6 @@ class MacOSCookieManager extends PlatformCookieManager with ChannelController {
 
     assert(url.toString().isNotEmpty);
     assert(name.isNotEmpty);
-    assert(value.isNotEmpty);
     assert(path.isNotEmpty);
 
     if (await _shouldUseJavascript()) {

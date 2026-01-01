@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_inappwebview_platform_interface/flutter_inappwebview_platform_interface.dart';
 
 import 'webview_environment/webview_environment.dart';
@@ -49,6 +48,13 @@ class WindowsCookieManager extends PlatformCookieManager
     initMethodCallHandler();
   }
 
+  static final WindowsCookieManager _staticValue =
+      WindowsCookieManager(WindowsCookieManagerCreationParams());
+
+  factory WindowsCookieManager.static() {
+    return _staticValue;
+  }
+
   static WindowsCookieManager? _instance;
 
   ///Gets the [WindowsCookieManager] shared instance.
@@ -89,7 +95,6 @@ class WindowsCookieManager extends PlatformCookieManager
       PlatformInAppWebViewController? webViewController}) async {
     assert(url.toString().isNotEmpty);
     assert(name.isNotEmpty);
-    assert(value.isNotEmpty);
     assert(path.isNotEmpty);
 
     Map<String, dynamic> args = <String, dynamic>{};
