@@ -927,6 +927,43 @@ In that case, after the `window.addEventListener("flutterInAppWebViewPlatformRea
   final void Function(T controller, WebUri? url, bool? isReload)?
       onUpdateVisitedHistory;
 
+  ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onCanGoBackForwardChanged}
+  ///Event fired when the navigation state of the `WebView` changes, specifically
+  ///when the ability to go back or forward changes.
+  ///
+  ///This event is triggered automatically by the native platform when the back/forward
+  ///history list changes, eliminating the need to manually poll [canGoBack] and [canGoForward].
+  ///
+  ///[canGoBack] indicates whether the `WebView` can navigate back.
+  ///
+  ///[canGoForward] indicates whether the `WebView` can navigate forward.
+  ///{@endtemplate}
+  ///
+  ///{@macro flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onCanGoBackForwardChanged.supported_platforms}
+  @SupportedPlatforms(platforms: [
+    AndroidPlatform(
+      note:
+          'This event is triggered during navigation events like page load start, page load finish, and history updates.',
+    ),
+    IOSPlatform(
+      apiName: 'WKWebView.canGoBack/canGoForward KVO',
+      apiUrl:
+          'https://developer.apple.com/documentation/webkit/wkwebview/1414995-cangoback',
+    ),
+    MacOSPlatform(
+      apiName: 'WKWebView.canGoBack/canGoForward KVO',
+      apiUrl:
+          'https://developer.apple.com/documentation/webkit/wkwebview/1414995-cangoback',
+    ),
+    WindowsPlatform(
+      apiName: 'ICoreWebView2.add_HistoryChanged',
+      apiUrl:
+          'https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2?view=webview2-1.0.2210.55#add_historychanged',
+    ),
+  ])
+  final void Function(T controller, bool canGoBack, bool canGoForward)?
+      onCanGoBackForwardChanged;
+
   ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onPrint}
   ///Use [onPrintRequest] instead
   ///{@endtemplate}
@@ -2080,6 +2117,7 @@ This is a limitation of the native WebKit APIs."""),
       this.onAjaxProgress,
       this.shouldInterceptFetchRequest,
       this.onUpdateVisitedHistory,
+      this.onCanGoBackForwardChanged,
       @Deprecated("Use onPrintRequest instead") this.onPrint,
       this.onPrintRequest,
       this.onLongPressHitTestResult,

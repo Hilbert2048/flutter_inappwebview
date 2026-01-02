@@ -1829,6 +1829,24 @@ enum PlatformInAppBrowserEventsMethod {
   ///{@endtemplate}
   onUpdateVisitedHistory,
 
+  ///Can be used to check if the [PlatformInAppBrowserEvents.onCanGoBackForwardChanged] method is supported at runtime.
+  ///
+  ///{@template flutter_inappwebview_platform_interface.PlatformInAppBrowserEvents.onCanGoBackForwardChanged.supported_platforms}
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- Android WebView
+  ///- iOS WKWebView
+  ///- macOS WKWebView
+  ///- Windows WebView2
+  ///
+  ///**Parameters - Officially Supported Platforms/Implementations**:
+  ///- [canGoBack]: all platforms
+  ///- [canGoForward]: all platforms
+  ///
+  ///Use the [PlatformInAppBrowserEvents.isMethodSupported] method to check if this method is supported at runtime.
+  ///{@endtemplate}
+  onCanGoBackForwardChanged,
+
   ///Can be used to check if the [PlatformInAppBrowserEvents.onWebContentProcessDidTerminate] method is supported at runtime.
   ///
   ///{@template flutter_inappwebview_platform_interface.PlatformInAppBrowserEvents.onWebContentProcessDidTerminate.supported_platforms}
@@ -2348,6 +2366,14 @@ extension _PlatformInAppBrowserEventsMethodSupported
               TargetPlatform.windows
             ].contains(platform ?? defaultTargetPlatform);
       case PlatformInAppBrowserEventsMethod.onUpdateVisitedHistory:
+        return ((kIsWeb && platform != null) || !kIsWeb) &&
+            [
+              TargetPlatform.android,
+              TargetPlatform.iOS,
+              TargetPlatform.macOS,
+              TargetPlatform.windows
+            ].contains(platform ?? defaultTargetPlatform);
+      case PlatformInAppBrowserEventsMethod.onCanGoBackForwardChanged:
         return ((kIsWeb && platform != null) || !kIsWeb) &&
             [
               TargetPlatform.android,

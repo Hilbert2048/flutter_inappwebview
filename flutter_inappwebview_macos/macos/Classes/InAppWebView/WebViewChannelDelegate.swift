@@ -915,6 +915,14 @@ public class WebViewChannelDelegate: ChannelDelegate {
         channel?.invokeMethod("onUpdateVisitedHistory", arguments: arguments)
     }
     
+    public func onCanGoBackForwardChanged(canGoBack: Bool, canGoForward: Bool) {
+        let arguments: [String: Any?] = [
+            "canGoBack": canGoBack,
+            "canGoForward": canGoForward
+        ]
+        channel?.invokeMethod("onCanGoBackForwardChanged", arguments: arguments)
+    }
+    
     public func onReceivedError(request: WebResourceRequest, error: WebResourceError) {
         let arguments: [String: Any?] = [
             "request": request.toMap(),

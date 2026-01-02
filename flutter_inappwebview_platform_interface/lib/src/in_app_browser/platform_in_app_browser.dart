@@ -1390,6 +1390,17 @@ In that case, after the `window.addEventListener("flutterInAppWebViewPlatformRea
   void onUpdateVisitedHistory(WebUri? url,
       @SupportedPlatforms(platforms: [AndroidPlatform()]) bool? isReload) {}
 
+  ///{@macro flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onCanGoBackForwardChanged}
+  ///
+  ///{@macro flutter_inappwebview_platform_interface.PlatformInAppBrowserEvents.onCanGoBackForwardChanged.supported_platforms}
+  @SupportedPlatforms(platforms: [
+    AndroidPlatform(),
+    IOSPlatform(),
+    MacOSPlatform(),
+    WindowsPlatform(),
+  ])
+  void onCanGoBackForwardChanged(bool canGoBack, bool canGoForward) {}
+
   ///{@macro flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onPrint}
   ///
   ///{@macro flutter_inappwebview_platform_interface.PlatformInAppBrowserEvents.onPrint.supported_platforms}

@@ -142,6 +142,8 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
   public InAppWebViewSettings customSettings = new InAppWebViewSettings();
   public boolean isLoading = false;
   private boolean inFullscreen = false;
+  private boolean lastCanGoBack = false;
+  private boolean lastCanGoForward = false;
   public float zoomScale = 1.0f;
   public ContentBlockerHandler contentBlockerHandler = new ContentBlockerHandler();
   @Nullable
@@ -1971,6 +1973,18 @@ final public class InAppWebView extends InputAwareWebView implements InAppWebVie
     if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
       WebViewCompat.addWebMessageListener(this, webMessageListener.jsObjectName, webMessageListener.allowedOriginRules, webMessageListener.listener);
       webMessageListeners.add(webMessageListener);
+    }
+  }
+
+  public void checkCanGoBackForwardChanged() {
+    boolean currentCanGoBack = canGoBack();
+    boolean currentCanGoForward = canGoForward();
+    if (currentCanGoBack != lastCanGoBack || currentCanGoForward != lastCanGoForward) {
+      lastCanGoBack = currentCanGoBack;
+      lastCanGoForward = currentCanGoForward;
+      if (channelDelegate != null) {
+        channelDelegate.onCanGoBackForwardChanged(currentCanGoBack, currentCanGoForward);
+      }
     }
   }
 

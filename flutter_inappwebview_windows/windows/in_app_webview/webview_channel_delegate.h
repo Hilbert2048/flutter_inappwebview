@@ -112,6 +112,7 @@ namespace flutter_inappwebview_plugin
     void onReceivedHttpError(std::shared_ptr<WebResourceRequest> request, std::shared_ptr<WebResourceResponse> error) const;
     void onTitleChanged(const std::optional<std::string>& title) const;
     void onUpdateVisitedHistory(const std::optional<std::string>& url, const std::optional<bool>& isReload) const;
+    void onCanGoBackForwardChanged(const bool& canGoBack, const bool& canGoForward) const;
     void onCallJsHandler(const std::string& handlerName, const std::unique_ptr<JavaScriptHandlerFunctionData> data, std::unique_ptr<CallJsHandlerCallback> callback) const;
     void onConsoleMessage(const std::string& message, const int64_t& messageLevel) const;
     void onDevToolsProtocolEventReceived(const std::string& eventName, const std::string& data) const;

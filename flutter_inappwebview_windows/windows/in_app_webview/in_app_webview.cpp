@@ -689,6 +689,7 @@ namespace flutter_inappwebview_plugin
             isReload = lastNavigationAction_->navigationType.value() == NavigationActionType::reload;
           }
           channelDelegate->onUpdateVisitedHistory(getUrl(), isReload);
+          channelDelegate->onCanGoBackForwardChanged(canGoBack(), canGoForward());
         }
         return S_OK;
       }

@@ -90,6 +90,16 @@ public class InAppWebView: WKWebView, WKUIDelegate,
             options: [.new, .old],
             context: nil)
         
+        addObserver(self,
+            forKeyPath: #keyPath(WKWebView.canGoBack),
+            options: [.new, .old],
+            context: nil)
+        
+        addObserver(self,
+            forKeyPath: #keyPath(WKWebView.canGoForward),
+            options: [.new, .old],
+            context: nil)
+        
         if #available(macOS 12.0, *) {
             addObserver(self,
                 forKeyPath: #keyPath(WKWebView.cameraCaptureState),
@@ -338,6 +348,12 @@ public class InAppWebView: WKWebView, WKUIDelegate,
             let newTitle = change?[.newKey] as? String
             channelDelegate?.onTitleChanged(title: newTitle)
             inAppBrowserDelegate?.didChangeTitle(title: newTitle)
+        } else if keyPath == #keyPath(WKWebView.canGoBack) || keyPath == #keyPath(WKWebView.canGoForward) {
+            let oldValue = change?[.oldKey] as? Bool
+            let newValue = change?[.newKey] as? Bool
+            if oldValue != newValue {
+                channelDelegate?.onCanGoBackForwardChanged(canGoBack: canGoBack, canGoForward: canGoForward)
+            }
         }
         else if #available(macOS 12.0, *) {
             if keyPath == #keyPath(WKWebView.cameraCaptureState) || keyPath == #keyPath(WKWebView.microphoneCaptureState) {
@@ -2810,6 +2826,8 @@ if(window.\(JavaScriptBridgeJS.get_JAVASCRIPT_BRIDGE_NAME())[\(_callHandlerID)] 
         removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
         removeObserver(self, forKeyPath: #keyPath(WKWebView.url))
         removeObserver(self, forKeyPath: #keyPath(WKWebView.title))
+        removeObserver(self, forKeyPath: #keyPath(WKWebView.canGoBack))
+        removeObserver(self, forKeyPath: #keyPath(WKWebView.canGoForward))
         if #available(macOS 12.0, *) {
             removeObserver(self, forKeyPath: #keyPath(WKWebView.cameraCaptureState))
             removeObserver(self, forKeyPath: #keyPath(WKWebView.microphoneCaptureState))

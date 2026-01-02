@@ -406,6 +406,16 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             options: [.new, .old],
             context: nil)
         
+        addObserver(self,
+            forKeyPath: #keyPath(WKWebView.canGoBack),
+            options: [.new, .old],
+            context: nil)
+        
+        addObserver(self,
+            forKeyPath: #keyPath(WKWebView.canGoForward),
+            options: [.new, .old],
+            context: nil)
+        
         if #available(iOS 15.0, *) {
             addObserver(self,
                 forKeyPath: #keyPath(WKWebView.cameraCaptureState),
@@ -781,6 +791,12 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             let newTitle = change?[.newKey] as? String
             channelDelegate?.onTitleChanged(title: newTitle)
             inAppBrowserDelegate?.didChangeTitle(title: newTitle)
+        } else if keyPath == #keyPath(WKWebView.canGoBack) || keyPath == #keyPath(WKWebView.canGoForward) {
+            let oldValue = change?[.oldKey] as? Bool
+            let newValue = change?[.newKey] as? Bool
+            if oldValue != newValue {
+                channelDelegate?.onCanGoBackForwardChanged(canGoBack: canGoBack, canGoForward: canGoForward)
+            }
         } else if keyPath == #keyPath(UIScrollView.contentOffset) {
             let newContentOffset = change?[.newKey] as? CGPoint
             let oldContentOffset = change?[.oldKey] as? CGPoint
@@ -3486,6 +3502,8 @@ if(window.\(JavaScriptBridgeJS.get_JAVASCRIPT_BRIDGE_NAME())[\(_callHandlerID)] 
         removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
         removeObserver(self, forKeyPath: #keyPath(WKWebView.url))
         removeObserver(self, forKeyPath: #keyPath(WKWebView.title))
+        removeObserver(self, forKeyPath: #keyPath(WKWebView.canGoBack))
+        removeObserver(self, forKeyPath: #keyPath(WKWebView.canGoForward))
         if #available(iOS 15.0, *) {
             removeObserver(self, forKeyPath: #keyPath(WKWebView.cameraCaptureState))
             removeObserver(self, forKeyPath: #keyPath(WKWebView.microphoneCaptureState))

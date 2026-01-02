@@ -1344,6 +1344,25 @@ enum PlatformWebViewCreationParamsProperty {
   ///{@endtemplate}
   onUpdateVisitedHistory,
 
+  ///Can be used to check if the [PlatformWebViewCreationParams.onCanGoBackForwardChanged] property is supported at runtime.
+  ///
+  ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onCanGoBackForwardChanged.supported_platforms}
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- Android WebView
+  ///    - Note: This event is triggered during navigation events like page load start, page load finish, and history updates.
+  ///- iOS WKWebView ([Official API - WKWebView.canGoBack/canGoForward KVO](https://developer.apple.com/documentation/webkit/wkwebview/1414995-cangoback))
+  ///- macOS WKWebView ([Official API - WKWebView.canGoBack/canGoForward KVO](https://developer.apple.com/documentation/webkit/wkwebview/1414995-cangoback))
+  ///- Windows WebView2 ([Official API - ICoreWebView2.add_HistoryChanged](https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2?view=webview2-1.0.2210.55#add_historychanged))
+  ///
+  ///**Parameters - Officially Supported Platforms/Implementations**:
+  ///- [canGoBack]: all platforms
+  ///- [canGoForward]: all platforms
+  ///
+  ///Use the [PlatformWebViewCreationParams.isPropertySupported] method to check if this property is supported at runtime.
+  ///{@endtemplate}
+  onCanGoBackForwardChanged,
+
   ///Can be used to check if the [PlatformWebViewCreationParams.onWebContentProcessDidTerminate] property is supported at runtime.
   ///
   ///{@template flutter_inappwebview_platform_interface.PlatformWebViewCreationParams.onWebContentProcessDidTerminate.supported_platforms}
@@ -2001,6 +2020,10 @@ extension _PlatformWebViewCreationParamsPropertySupported
                   TargetPlatform.macOS,
                   TargetPlatform.windows
                 ].contains(platform ?? defaultTargetPlatform);
+      case PlatformWebViewCreationParamsProperty.onCanGoBackForwardChanged:
+        return ((kIsWeb && platform != null) || !kIsWeb) &&
+            [TargetPlatform.android, TargetPlatform.iOS, TargetPlatform.macOS, TargetPlatform.windows]
+                .contains(platform ?? defaultTargetPlatform);
       case PlatformWebViewCreationParamsProperty
             .onWebContentProcessDidTerminate:
         return ((kIsWeb && platform != null) || !kIsWeb) &&

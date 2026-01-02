@@ -229,6 +229,8 @@ public class InAppWebViewClient extends WebViewClient {
     if (webView.channelDelegate != null) {
       webView.channelDelegate.onLoadStart(url);
     }
+
+    webView.checkCanGoBackForwardChanged();
   }
 
   public void onPageFinished(WebView view, String url) {
@@ -257,6 +259,8 @@ public class InAppWebViewClient extends WebViewClient {
     if (webView.channelDelegate != null) {
       webView.channelDelegate.onLoadStop(url);
     }
+
+    webView.checkCanGoBackForwardChanged();
   }
 
   @Override
@@ -274,6 +278,8 @@ public class InAppWebViewClient extends WebViewClient {
     if (webView.channelDelegate != null) {
       webView.channelDelegate.onUpdateVisitedHistory(url, isReload);
     }
+
+    webView.checkCanGoBackForwardChanged();
   }
 
   @RequiresApi(api = Build.VERSION_CODES.M)

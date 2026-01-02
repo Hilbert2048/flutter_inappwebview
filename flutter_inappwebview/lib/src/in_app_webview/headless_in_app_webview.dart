@@ -125,6 +125,7 @@ class HeadlessInAppWebView {
       FutureOr<ServerTrustAuthResponse?> Function(InAppWebViewController controller, ServerTrustChallenge challenge)? onReceivedServerTrustAuthRequest,
       void Function(InAppWebViewController controller, int x, int y)? onScrollChanged,
       void Function(InAppWebViewController controller, WebUri? url, bool? isReload)? onUpdateVisitedHistory,
+      void Function(InAppWebViewController controller, bool canGoBack, bool canGoForward)? onCanGoBackForwardChanged,
       void Function(InAppWebViewController controller)? onWebViewCreated,
       FutureOr<AjaxRequest?> Function(InAppWebViewController controller, AjaxRequest ajaxRequest)? shouldInterceptAjaxRequest,
       FutureOr<FetchRequest?> Function(InAppWebViewController controller, FetchRequest fetchRequest)? shouldInterceptFetchRequest,
@@ -310,6 +311,10 @@ class HeadlessInAppWebView {
           onUpdateVisitedHistory: onUpdateVisitedHistory != null
               ? (controller, url, isReload) =>
                   onUpdateVisitedHistory.call(controller, url, isReload)
+              : null,
+          onCanGoBackForwardChanged: onCanGoBackForwardChanged != null
+              ? (controller, canGoBack, canGoForward) =>
+                  onCanGoBackForwardChanged.call(controller, canGoBack, canGoForward)
               : null,
           onPrint: onPrint != null
               ? (controller, url) => onPrint.call(controller, url)

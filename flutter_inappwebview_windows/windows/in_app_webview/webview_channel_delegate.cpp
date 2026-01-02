@@ -423,6 +423,19 @@ namespace flutter_inappwebview_plugin
     channel->InvokeMethod("onUpdateVisitedHistory", std::move(arguments));
   }
 
+  void WebViewChannelDelegate::onCanGoBackForwardChanged(const bool& canGoBack, const bool& canGoForward) const
+  {
+    if (!channel) {
+      return;
+    }
+
+    auto arguments = std::make_unique<flutter::EncodableValue>(flutter::EncodableMap{
+      {"canGoBack", canGoBack},
+      {"canGoForward", canGoForward}
+      });
+    channel->InvokeMethod("onCanGoBackForwardChanged", std::move(arguments));
+  }
+
   void WebViewChannelDelegate::onCallJsHandler(const std::string& handlerName, const std::unique_ptr<JavaScriptHandlerFunctionData> data, std::unique_ptr<CallJsHandlerCallback> callback) const
   {
     if (!channel) {

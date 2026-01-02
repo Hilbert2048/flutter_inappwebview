@@ -1063,6 +1063,15 @@ public class WebViewChannelDelegate extends ChannelDelegateImpl {
     channel.invokeMethod("onUpdateVisitedHistory", obj);
   }
 
+  public void onCanGoBackForwardChanged(boolean canGoBack, boolean canGoForward) {
+    MethodChannel channel = getChannel();
+    if (channel == null) return;
+    Map<String, Object> obj = new HashMap<>();
+    obj.put("canGoBack", canGoBack);
+    obj.put("canGoForward", canGoForward);
+    channel.invokeMethod("onCanGoBackForwardChanged", obj);
+  }
+
   public void onReceivedError(WebResourceRequestExt request, WebResourceErrorExt error) {
     MethodChannel channel = getChannel();
     if (channel == null) return;

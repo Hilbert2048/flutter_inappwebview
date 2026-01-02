@@ -1032,6 +1032,20 @@ class AndroidInAppWebViewController extends PlatformInAppWebViewController
             _inAppBrowserEventHandler!.onUpdateVisitedHistory(uri, isReload);
         }
         break;
+      case "onCanGoBackForwardChanged":
+        if ((webviewParams != null &&
+                webviewParams!.onCanGoBackForwardChanged != null) ||
+            _inAppBrowserEventHandler != null) {
+          bool canGoBack = call.arguments["canGoBack"];
+          bool canGoForward = call.arguments["canGoForward"];
+          if (webviewParams != null &&
+              webviewParams!.onCanGoBackForwardChanged != null)
+            webviewParams!.onCanGoBackForwardChanged!(
+                _controllerFromPlatform, canGoBack, canGoForward);
+          else
+            _inAppBrowserEventHandler!.onCanGoBackForwardChanged(canGoBack, canGoForward);
+        }
+        break;
       case "onWebContentProcessDidTerminate":
         if (webviewParams != null &&
             (webviewParams!.onWebContentProcessDidTerminate != null ||
