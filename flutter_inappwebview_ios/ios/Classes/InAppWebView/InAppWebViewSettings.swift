@@ -56,6 +56,7 @@ public class InAppWebViewSettings: ISettings<InAppWebView> {
     var preferredContentMode = 0
     var sharedCookiesEnabled = false
     var automaticallyAdjustsScrollIndicatorInsets = false
+    var automaticallyAdjustsContentInsetForKeyboard = false
     var accessibilityIgnoresInvertColors = false
     var decelerationRate = "NORMAL" // UIScrollView.DecelerationRate.normal
     var alwaysBounceVertical = false
@@ -150,6 +151,7 @@ public class InAppWebViewSettings: ISettings<InAppWebView> {
                 realSettings["preferredContentMode"] = configuration.defaultWebpagePreferences.preferredContentMode.rawValue
                 realSettings["automaticallyAdjustsScrollIndicatorInsets"] = webView.scrollView.automaticallyAdjustsScrollIndicatorInsets
             }
+            realSettings["automaticallyAdjustsContentInsetForKeyboard"] = automaticallyAdjustsContentInsetForKeyboard
             realSettings["selectionGranularity"] = configuration.selectionGranularity.rawValue
             if #available(iOS 11.0, *) {
                 realSettings["accessibilityIgnoresInvertColors"] = webView.accessibilityIgnoresInvertColors

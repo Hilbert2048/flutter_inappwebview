@@ -1253,6 +1253,17 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
   ])
   bool? automaticallyAdjustsScrollIndicatorInsets;
 
+  ///Set to `true` to automatically adjust the WebView's `scrollView.contentInset` when the keyboard appears,
+  ///so that the content is not obscured by the keyboard. This is useful when the Flutter `Scaffold.resizeToAvoidBottomInset`
+  ///is set to `false` and you want to handle keyboard avoidance manually without resizing the WebView.
+  ///When enabled, the WebView will listen for keyboard show/hide events and adjust the content inset accordingly,
+  ///which provides a smoother experience compared to resizing the WebView.
+  ///The default value is `false`.
+  @SupportedPlatforms(platforms: [
+    IOSPlatform(available: "9.0")
+  ])
+  bool? automaticallyAdjustsContentInsetForKeyboard;
+
   ///A Boolean value indicating whether the WebView ignores an accessibility request to invert its colors.
   ///The default value is `false`.
   @SupportedPlatforms(platforms: [
@@ -2218,6 +2229,7 @@ as it can cause framerate drops on animations in Android 9 and lower (see [Hybri
     this.dataDetectorTypes = const [DataDetectorTypes_.NONE],
     this.sharedCookiesEnabled = false,
     this.automaticallyAdjustsScrollIndicatorInsets = false,
+    this.automaticallyAdjustsContentInsetForKeyboard = false,
     this.accessibilityIgnoresInvertColors = false,
     this.decelerationRate = ScrollViewDecelerationRate_.NORMAL,
     this.alwaysBounceVertical = false,

@@ -276,6 +276,17 @@ class InAppWebViewSettings {
   ///- iOS WKWebView 13.0+ ([Official API - UIScrollView.automaticallyAdjustsScrollIndicatorInsets](https://developer.apple.com/documentation/uikit/uiscrollview/3198043-automaticallyadjustsscrollindica))
   bool? automaticallyAdjustsScrollIndicatorInsets;
 
+  ///Set to `true` to automatically adjust the WebView's `scrollView.contentInset` when the keyboard appears,
+  ///so that the content is not obscured by the keyboard. This is useful when the Flutter `Scaffold.resizeToAvoidBottomInset`
+  ///is set to `false` and you want to handle keyboard avoidance manually without resizing the WebView.
+  ///When enabled, the WebView will listen for keyboard show/hide events and adjust the content inset accordingly,
+  ///which provides a smoother experience compared to resizing the WebView.
+  ///The default value is `false`.
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- iOS WKWebView 9.0+
+  bool? automaticallyAdjustsContentInsetForKeyboard;
+
   ///Sets whether the WebView should not load image resources from the network (resources accessed via http and https URI schemes). The default value is `false`.
   ///
   ///**Officially Supported Platforms/Implementations**:
@@ -1710,6 +1721,7 @@ class InAppWebViewSettings {
       this.dataDetectorTypes = const [DataDetectorTypes.NONE],
       this.sharedCookiesEnabled = false,
       this.automaticallyAdjustsScrollIndicatorInsets = false,
+      this.automaticallyAdjustsContentInsetForKeyboard = false,
       this.accessibilityIgnoresInvertColors = false,
       this.decelerationRate = ScrollViewDecelerationRate.NORMAL,
       this.alwaysBounceVertical = false,
@@ -1955,6 +1967,8 @@ class InAppWebViewSettings {
     instance.applicationNameForUserAgent = map['applicationNameForUserAgent'];
     instance.automaticallyAdjustsScrollIndicatorInsets =
         map['automaticallyAdjustsScrollIndicatorInsets'];
+    instance.automaticallyAdjustsContentInsetForKeyboard =
+        map['automaticallyAdjustsContentInsetForKeyboard'];
     instance.blockNetworkImage = map['blockNetworkImage'];
     instance.blockNetworkLoads = map['blockNetworkLoads'];
     instance.browserAcceleratorKeysEnabled =
@@ -2169,6 +2183,7 @@ class InAppWebViewSettings {
       "applicationNameForUserAgent": applicationNameForUserAgent,
       "automaticallyAdjustsScrollIndicatorInsets":
           automaticallyAdjustsScrollIndicatorInsets,
+      "automaticallyAdjustsContentInsetForKeyboard": automaticallyAdjustsContentInsetForKeyboard,
       "blockNetworkImage": blockNetworkImage,
       "blockNetworkLoads": blockNetworkLoads,
       "browserAcceleratorKeysEnabled": browserAcceleratorKeysEnabled,
@@ -2653,6 +2668,17 @@ enum InAppWebViewSettingsProperty {
   ///Use the [InAppWebViewSettings.isPropertySupported] method to check if this property is supported at runtime.
   ///{@endtemplate}
   automaticallyAdjustsScrollIndicatorInsets,
+
+  ///Can be used to check if the [InAppWebViewSettings.automaticallyAdjustsContentInsetForKeyboard] property is supported at runtime.
+  ///
+  ///{@template flutter_inappwebview_platform_interface.InAppWebViewSettings.automaticallyAdjustsContentInsetForKeyboard.supported_platforms}
+  ///
+  ///**Officially Supported Platforms/Implementations**:
+  ///- iOS WKWebView 9.0+
+  ///
+  ///Use the [InAppWebViewSettings.isPropertySupported] method to check if this property is supported at runtime.
+  ///{@endtemplate}
+  automaticallyAdjustsContentInsetForKeyboard,
 
   ///Can be used to check if the [InAppWebViewSettings.blockNetworkImage] property is supported at runtime.
   ///
@@ -4410,6 +4436,9 @@ extension _InAppWebViewSettingsPropertySupported on InAppWebViewSettings {
                 .contains(platform ?? defaultTargetPlatform);
       case InAppWebViewSettingsProperty
             .automaticallyAdjustsScrollIndicatorInsets:
+        return ((kIsWeb && platform != null) || !kIsWeb) &&
+            [TargetPlatform.iOS].contains(platform ?? defaultTargetPlatform);
+      case InAppWebViewSettingsProperty.automaticallyAdjustsContentInsetForKeyboard:
         return ((kIsWeb && platform != null) || !kIsWeb) &&
             [TargetPlatform.iOS].contains(platform ?? defaultTargetPlatform);
       case InAppWebViewSettingsProperty.blockNetworkImage:

@@ -121,7 +121,36 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
     
     // Fix https://github.com/pichillilorenzo/flutter_inappwebview/issues/1947
     private var _scrollViewContentInsetAdjusted = false
+    // For automaticallyAdjustsContentInsetForKeyboard feature
+    private var _keyboardContentInsetBottom: CGFloat = 0
+    
     @objc func keyboardWillShow(notification: NSNotification) {
+        // Handle automaticallyAdjustsContentInsetForKeyboard
+        if settings?.automaticallyAdjustsContentInsetForKeyboard == true {
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                // Convert keyboard frame to the webview's coordinate system
+                let keyboardFrameInView = convert(keyboardFrame, from: nil)
+                let intersection = bounds.intersection(keyboardFrameInView)
+                
+                if !intersection.isNull && intersection.height > 0 {
+                    _keyboardContentInsetBottom = intersection.height
+                    var currentInset = scrollView.contentInset
+                    currentInset.bottom = _keyboardContentInsetBottom
+                    
+                    // Animate the content inset change along with keyboard animation
+                    let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval ?? 0.25
+                    let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt ?? 0
+                    
+                    UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(rawValue: curve << 16), animations: {
+                        self.scrollView.contentInset = currentInset
+                        self.scrollView.scrollIndicatorInsets = currentInset
+                    })
+                }
+            }
+            return
+        }
+        
+        // Original fix for iOS 17.2+ issue
         // UIResponder.keyboardWillShowNotification will be fired also
         // when changing focus between HTML inputs with the keyboard already open
         if (scrollView.adjustedContentInset != .zero) {
@@ -140,7 +169,26 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
             }
         }
     }
+    
     @objc func keyboardWillHide(notification: NSNotification) {
+        // Handle automaticallyAdjustsContentInsetForKeyboard
+        if settings?.automaticallyAdjustsContentInsetForKeyboard == true {
+            _keyboardContentInsetBottom = 0
+            var currentInset = scrollView.contentInset
+            currentInset.bottom = 0
+            
+            // Animate the content inset change along with keyboard animation
+            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval ?? 0.25
+            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt ?? 0
+            
+            UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(rawValue: curve << 16), animations: {
+                self.scrollView.contentInset = currentInset
+                self.scrollView.scrollIndicatorInsets = currentInset
+            })
+            return
+        }
+        
+        // Original fix for iOS 17.2+ issue
         _scrollViewContentInsetAdjusted = false
     }
     
@@ -374,8 +422,17 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
     }
 
     public func prepare() {
-        if #available(iOS 17.2, *) {
-            // Fix https://github.com/pichillilorenzo/flutter_inappwebview/issues/1947
+        // Register keyboard observers if:
+        // 1. iOS 17.2+ (Fix https://github.com/pichillilorenzo/flutter_inappwebview/issues/1947)
+        // 2. automaticallyAdjustsContentInsetForKeyboard is enabled
+        let needsKeyboardObserver = {
+            if #available(iOS 17.2, *) {
+                return true
+            }
+            return settings?.automaticallyAdjustsContentInsetForKeyboard == true
+        }()
+        
+        if needsKeyboardObserver {
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)),
                                                    name: UIResponder.keyboardWillShowNotification,
                                                    object: nil)
