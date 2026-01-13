@@ -342,6 +342,8 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate,
                     let _ = contextMenuSettings.parse(settings: contextMenuSettingsMap)
                     if contextMenuSettings.hideDefaultSystemContextMenuItems {
                         builder.remove(menu: .lookup)
+                        // hide 'Copy Link With Highlight' menu
+                        builder.remove(menu: .share)
                     }
                 }
             }
